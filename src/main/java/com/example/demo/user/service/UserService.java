@@ -4,6 +4,8 @@ import com.example.demo.user.controller.form.UserSignUpForm;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
+
 public interface UserService {
     boolean signUp(UserSignUpForm userSignUpForm);
 
@@ -12,4 +14,6 @@ public interface UserService {
     ResponseEntity getUserInfo();
     Boolean checkNickname(String nickname);
     Boolean checkEmail(String email);
+
+    ResponseEntity<Map<String, Object>> blockUser(Long userId);
 }

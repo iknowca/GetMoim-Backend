@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -35,5 +37,10 @@ public class UserController {
     @GetMapping("/check-email/{email}")
     public Boolean getEmail(@PathVariable("email")  String email){
         return userService.checkEmail(email);
+    }
+
+    @PostMapping("/{userId}/block")
+    public ResponseEntity<Map<String, Object>> blockUser(@PathVariable Long userId){
+        return userService.blockUser(userId);
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo.user.service;
 import com.example.demo.security.costomUser.CustomUserDetails;
 import com.example.demo.security.service.RedisService;
 import com.example.demo.security.utils.JwtUtil;
+import com.example.demo.user.entity.BlockUser;
 import com.example.demo.user.entity.Role;
 import com.example.demo.user.entity.User;
 import com.example.demo.user.entity.UserRole;
@@ -20,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -96,5 +98,20 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> blockUser(Long userId) {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        Optional<User> maybeUser = userRepository.findById(userId);
+        if(maybeUser.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        User blockedUser  = maybeUser.get();
+        BlockUser blockUser = BlockUser.builder()
+                .user(user)
+                .blockedUser(blockedUser)
+                .build();
+        return ResponseEntity.ok().build();
     }
 }
