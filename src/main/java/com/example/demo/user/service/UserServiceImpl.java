@@ -9,6 +9,7 @@ import com.example.demo.user.entity.User;
 import com.example.demo.user.entity.UserRole;
 import com.example.demo.user.controller.form.UserInfoResForm;
 import com.example.demo.user.controller.form.UserSignUpForm;
+import com.example.demo.user.repository.BlockUserRepository;
 import com.example.demo.user.repository.RoleRepository;
 import com.example.demo.user.repository.UserRepository;
 import com.example.demo.user.repository.UserRoleRepository;
@@ -34,6 +35,7 @@ public class UserServiceImpl implements UserService {
     final private RoleRepository roleRepository;
     final private UserRoleRepository userRoleRepository;
     final private RedisService redisService;
+    final private BlockUserRepository blockUserRepository;
     final private JwtUtil jwtUtil;
     @Override
     public boolean signUp(UserSignUpForm userSignUpForm) {
@@ -113,5 +115,14 @@ public class UserServiceImpl implements UserService {
                 .blockedUser(blockedUser)
                 .build();
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> cancelBlockUser(Long userId) {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        BlockUser blockUser = blockUserRepository.findByUserAndBlockUserId(user, userId);
+        blockUserRepository.delete(blockUser);
+        return ResponseEntity.noContent().build();
     }
 }

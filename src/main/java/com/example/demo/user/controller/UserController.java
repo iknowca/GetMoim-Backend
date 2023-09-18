@@ -43,4 +43,8 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> blockUser(@PathVariable Long userId){
         return userService.blockUser(userId);
     }
+    @DeleteMapping("/{userId}/block")
+    public ResponseEntity<Map<String, Object>> cancelBlockUser(@PathVariable Long userId) {
+        return userService.cancelBlockUser(userId);
+    }
 }
