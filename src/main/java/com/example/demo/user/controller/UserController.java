@@ -52,4 +52,8 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> followUser(@PathVariable Long userId){
         return userService.followUser(userId);
     }
+    @DeleteMapping("/{userId}/follow")
+    public ResponseEntity<Map<String, Object>> cancelFollowUser(@PathVariable Long userId) {
+        return userService.cancelFollowUser(userId);
+    }
 }

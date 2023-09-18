@@ -6,10 +6,7 @@ import com.example.demo.security.utils.JwtUtil;
 import com.example.demo.user.entity.*;
 import com.example.demo.user.controller.form.UserInfoResForm;
 import com.example.demo.user.controller.form.UserSignUpForm;
-import com.example.demo.user.repository.BlockUserRepository;
-import com.example.demo.user.repository.RoleRepository;
-import com.example.demo.user.repository.UserRepository;
-import com.example.demo.user.repository.UserRoleRepository;
+import com.example.demo.user.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +30,7 @@ public class UserServiceImpl implements UserService {
     final private UserRoleRepository userRoleRepository;
     final private RedisService redisService;
     final private BlockUserRepository blockUserRepository;
+    final private FollowUserRepository followUserRepository;
     final private JwtUtil jwtUtil;
     @Override
     public boolean signUp(UserSignUpForm userSignUpForm) {
@@ -130,6 +128,14 @@ public class UserServiceImpl implements UserService {
                 .follower(user)
                 .followee(userRepository.findById(userId).get())
                 .build();
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> cancelFollowUser(Long userId) {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        FollowUser savedFollowUser = followUserRepository.findByFollowerAndFolloweeId(user, userId);
+        followUserRepository.delete(savedFollowUser);
         return ResponseEntity.ok(Map.of("success", true));
     }
 }
