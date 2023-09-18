@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
         BlockUser blockUser = blockUserRepository.findByUserAndBlockUserId(user, userId);
         blockUserRepository.delete(blockUser);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     @Override
