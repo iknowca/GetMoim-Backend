@@ -18,4 +18,6 @@ public interface UserService {
     ResponseEntity<Map<String, Object>> blockUser(Long userId);
 
     ResponseEntity<Map<String, Object>> cancelBlockUser(Long userId);
+
+    ResponseEntity<Map<String, Object>> followUser(Long userId);
 }

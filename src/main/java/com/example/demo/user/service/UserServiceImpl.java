@@ -3,10 +3,7 @@ package com.example.demo.user.service;
 import com.example.demo.security.costomUser.CustomUserDetails;
 import com.example.demo.security.service.RedisService;
 import com.example.demo.security.utils.JwtUtil;
-import com.example.demo.user.entity.BlockUser;
-import com.example.demo.user.entity.Role;
-import com.example.demo.user.entity.User;
-import com.example.demo.user.entity.UserRole;
+import com.example.demo.user.entity.*;
 import com.example.demo.user.controller.form.UserInfoResForm;
 import com.example.demo.user.controller.form.UserSignUpForm;
 import com.example.demo.user.repository.BlockUserRepository;
@@ -124,5 +121,15 @@ public class UserServiceImpl implements UserService {
         BlockUser blockUser = blockUserRepository.findByUserAndBlockUserId(user, userId);
         blockUserRepository.delete(blockUser);
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> followUser(Long userId) {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        FollowUser followUser = FollowUser.builder()
+                .follower(user)
+                .followee(userRepository.findById(userId).get())
+                .build();
+        return ResponseEntity.ok(Map.of("success", true));
     }
 }

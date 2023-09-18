@@ -47,4 +47,9 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> cancelBlockUser(@PathVariable Long userId) {
         return userService.cancelBlockUser(userId);
     }
+
+    @PostMapping("/{userId}/follow")
+    public ResponseEntity<Map<String, Object>> followUser(@PathVariable Long userId){
+        return userService.followUser(userId);
+    }
 }
