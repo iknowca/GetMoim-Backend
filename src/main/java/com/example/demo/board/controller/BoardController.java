@@ -46,4 +46,8 @@ public class BoardController {
     public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable Long boardId) {
         return boardSerivce.deleteBoard(boardId);
     }
+    @GetMapping(value="/list/event/main")
+    public ResponseEntity<List<BoardDto>> getEventBanners() {
+        return boardSerivce.getEventBanners();
+    }
 }

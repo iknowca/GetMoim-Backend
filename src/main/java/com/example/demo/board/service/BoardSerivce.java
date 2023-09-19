@@ -20,4 +20,6 @@ public interface BoardSerivce {
     ResponseEntity<List<BoardDto>> getBoardList(String category, Integer page, Integer size);
 
     ResponseEntity<Map<String, Object>> deleteBoard(Long boardId);
+
+    ResponseEntity<List<BoardDto>> getEventBanners();
 }

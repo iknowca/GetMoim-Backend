@@ -214,6 +214,17 @@ public class BoardSerivceImpl implements BoardSerivce {
                 .body(Map.of("success", true));
     }
 
+    @Override
+    public ResponseEntity<List<BoardDto>> getEventBanners() {
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("createdDate").descending());
+        List<EventBannerBoard> boardList = boardRepository.find5EventBanner(pageable);
+        List<BoardDto> responseList = boardList.stream().map(b->BoardDto.builder()
+                .id(b.getId())
+                .additionalInfo(Map.of("imagePath", b.getMainImage()))
+                .build()).toList();
+        return ResponseEntity.ok(responseList);
+    }
+
     private Board postQnaBoard(BoardDto req, BoardContents contents, User writer) {
         QnaBoard board = QnaBoard.builder()
                 .category(BoardCategory.valueOf(req.getCategory().toUpperCase()))
