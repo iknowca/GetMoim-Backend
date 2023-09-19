@@ -17,4 +17,5 @@ public class UserInfoResForm {
     private String email;
     private RoleType roleType;
     private List<Long> blockedUsers;
+    private List<Long> followUsers;
 }

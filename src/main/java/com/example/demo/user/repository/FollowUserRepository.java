@@ -13,4 +13,7 @@ public interface FollowUserRepository extends JpaRepository<FollowUser, Long> {
 
     @Query("select f from FollowUser f where f.follower=:user")
     List<User> findAllByFollower(User user);
+
+    @Query("select f from FollowUser  f join fetch f.followee where f.follower = :user")
+    List<FollowUser> findByUser(User user);
 }

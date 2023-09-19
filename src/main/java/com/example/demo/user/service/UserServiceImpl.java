@@ -78,7 +78,8 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .roleType(user.getRole())
-                .blockedUsers(blockUserRepository.findByUser(user).stream().map(User::getId).toList())
+                .blockedUsers(blockUserRepository.findByUser(user).stream().map(b->b.getBlockedUser().getId()).toList())
+                .followUsers(followUserRepository.findByUser(user).stream().map(f->f.getFollowee().getId()).toList())
                 .build();
         return ResponseEntity.ok()
                 .body(userInfoResForm);

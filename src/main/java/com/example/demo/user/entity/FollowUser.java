@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
 public class FollowUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +18,6 @@ public class FollowUser {
     @ManyToOne(fetch = FetchType.LAZY)
     private User follower;
     @ManyToOne(fetch = FetchType.LAZY)
+    @Getter
     private User followee;
 }
