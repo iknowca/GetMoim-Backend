@@ -1,5 +1,6 @@
 package com.example.demo.user.controller;
 
+import com.example.demo.user.controller.form.UserDto;
 import com.example.demo.user.controller.form.UserSignUpForm;
 import com.example.demo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -55,5 +57,9 @@ public class UserController {
     @DeleteMapping("/{userId}/follow")
     public ResponseEntity<Map<String, Object>> cancelFollowUser(@PathVariable Long userId) {
         return userService.cancelFollowUser(userId);
+    }
+    @GetMapping("/list/follow")
+    public ResponseEntity<List<UserDto>> getFollowList() {
+        return userService.getFolloweeList();
     }
 }

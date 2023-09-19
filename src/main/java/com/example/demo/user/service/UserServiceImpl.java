@@ -3,10 +3,12 @@ package com.example.demo.user.service;
 import com.example.demo.security.costomUser.CustomUserDetails;
 import com.example.demo.security.service.RedisService;
 import com.example.demo.security.utils.JwtUtil;
+import com.example.demo.user.controller.form.UserDto;
 import com.example.demo.user.entity.*;
 import com.example.demo.user.controller.form.UserInfoResForm;
 import com.example.demo.user.controller.form.UserSignUpForm;
 import com.example.demo.user.repository.*;
+import com.example.demo.util.mapStruct.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
     final private RedisService redisService;
     final private BlockUserRepository blockUserRepository;
     final private FollowUserRepository followUserRepository;
+    final private UserMapper userMapper;
     final private JwtUtil jwtUtil;
     @Override
     public boolean signUp(UserSignUpForm userSignUpForm) {
@@ -74,6 +78,7 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .roleType(user.getRole())
+                .blockedUsers(blockUserRepository.findByUser(user).stream().map(User::getId).toList())
                 .build();
         return ResponseEntity.ok()
                 .body(userInfoResForm);
@@ -137,5 +142,15 @@ public class UserServiceImpl implements UserService {
         FollowUser savedFollowUser = followUserRepository.findByFollowerAndFolloweeId(user, userId);
         followUserRepository.delete(savedFollowUser);
         return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDto>> getFolloweeList() {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        List<User> followeeList = followUserRepository.findAllByFollower(user);
+        List<UserDto> responseList = followeeList.stream()
+                .map(userMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(responseList);
     }
 }

@@ -1,9 +1,11 @@
 package com.example.demo.user.service;
 
+import com.example.demo.user.controller.form.UserDto;
 import com.example.demo.user.controller.form.UserSignUpForm;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -22,4 +24,6 @@ public interface UserService {
     ResponseEntity<Map<String, Object>> followUser(Long userId);
 
     ResponseEntity<Map<String, Object>> cancelFollowUser(Long userId);
+
+    ResponseEntity<List<UserDto>> getFolloweeList();
 }

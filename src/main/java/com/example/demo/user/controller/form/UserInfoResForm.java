@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -14,4 +16,5 @@ public class UserInfoResForm {
     private String nickname;
     private String email;
     private RoleType roleType;
+    private List<Long> blockedUsers;
 }
