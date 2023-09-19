@@ -114,7 +114,8 @@ public class UserServiceImpl implements UserService {
                 .user(user)
                 .blockedUser(blockedUser)
                 .build();
-        return ResponseEntity.ok().build();
+        blockUserRepository.save(blockUser);
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     @Override
