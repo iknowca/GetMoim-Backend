@@ -131,6 +131,7 @@ public class BoardSerivceImpl implements BoardSerivce {
             case "qna" -> postQnaBoard(req, contents, user);
             case "review" -> postReviewBoard(req, contents, user);
             case "faq" -> postFaqBoard(req, contents, user);
+            case "event" -> postEventBoard(req, contents, user);
             default -> null;
         };
 
@@ -145,6 +146,19 @@ public class BoardSerivceImpl implements BoardSerivce {
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "board", boardDto));
+    }
+
+    private Board postEventBoard(BoardDto req, BoardContents contents, User user) {
+        EventBannerBoard board = EventBannerBoard.builder()
+                .isDeleted(false)
+                .isPublic(true)
+                .title(req.getTitle())
+                .writer(user)
+                .contents(contents)
+                .mainImage((String)req.getAdditionalInfo().get("imagePath"))
+                .category(BoardCategory.valueOf(req.getCategory().toUpperCase()))
+                .build();
+        return (Board) boardRepository.save(board);
     }
 
     private Board postFaqBoard(BoardDto req, BoardContents contents, User user) {
