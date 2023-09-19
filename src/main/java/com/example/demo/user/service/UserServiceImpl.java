@@ -134,6 +134,7 @@ public class UserServiceImpl implements UserService {
                 .follower(user)
                 .followee(userRepository.findById(userId).get())
                 .build();
+        followUserRepository.save(followUser);
         return ResponseEntity.ok(Map.of("success", true));
     }
 
