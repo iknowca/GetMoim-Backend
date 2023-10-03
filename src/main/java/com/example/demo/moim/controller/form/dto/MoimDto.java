@@ -1,9 +1,7 @@
 package com.example.demo.moim.controller.form.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,12 +9,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class MoimDto {
     private Long id;
-    private MoimPaymentInfoDto paymentInfo;
-    private MoimDestinationDto moimDestination;
-    private MoimParticipantsInfoDto moimParticipantsInfo;
-    private MoimContentsDto moimContents;
-    private StateDto state;
     private LocalDateTime createdDate;
+    @JsonProperty("stateInfo")
+    private StateDto state;
+    @JsonProperty("destinationInfo")
+    private MoimDestinationDto destination;
+    @JsonProperty("paymentInfo")
+    private MoimPaymentInfoDto moimPaymentInfo;
+    @JsonProperty("participantsInfo")
+    private MoimParticipantsInfoDto participantsInfo;
+    @JsonProperty("basicInfo")
+    private MoimContentsDto contents;
 }

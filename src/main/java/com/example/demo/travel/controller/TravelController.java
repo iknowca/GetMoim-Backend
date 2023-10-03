@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/travel")
@@ -16,6 +17,12 @@ public class TravelController {
     @PostMapping
     public ResponseEntity<TravelDto> createTravel(@RequestBody TravelDto reqForm) {
         return travelService.createTravel(reqForm);
+    }
+    @GetMapping
+    public ResponseEntity<TravelDto> getTravel(@RequestParam String country,
+                                               @RequestParam String city,
+                                               @RequestParam String departureAirport) {
+        return travelService.getTravel(country, city, departureAirport);
     }
     @GetMapping("/country/list")
     public ResponseEntity<List<String>> getCountries() {
@@ -35,5 +42,12 @@ public class TravelController {
         return travelService.getAirports(country, city);
     }
 
-
+    @GetMapping("/image")
+    public ResponseEntity<String> getImagePath(@RequestParam String country, @RequestParam String city, @RequestParam String airport) {
+        return travelService.getImagePath(country, city, airport);
+    }
+    @PutMapping("/{trvelId}")
+    public ResponseEntity<Map<String, Object>> modifyTravel(@RequestBody TravelDto travelDto) {
+        return travelService.modifyTravel(travelDto);
+    }
 }

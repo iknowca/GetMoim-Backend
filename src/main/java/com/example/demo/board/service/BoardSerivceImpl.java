@@ -5,22 +5,21 @@ import com.example.demo.board.controller.dto.BoardDto;
 import com.example.demo.board.controller.dto.WriterDto;
 import com.example.demo.board.entity.*;
 import com.example.demo.board.repository.BoardRepository;
+import com.example.demo.moim.entity.Moim;
 import com.example.demo.moim.repository.MoimRepository;
 import com.example.demo.security.costomUser.CustomUserDetails;
 import com.example.demo.user.entity.User;
+import com.example.demo.util.mapStruct.board.BoardMapper;
+import com.example.demo.util.mapStruct.user.ProfileMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -28,46 +27,42 @@ public class BoardSerivceImpl implements BoardSerivce {
     final BoardRepository boardRepository;
     final MoimRepository moimRepository;
 
+    final BoardMapper boardMapper;
+    final ProfileMapper profileMapper;
+
     @Override
-    @Transactional
-    public ResponseEntity<BoardDto> post(Long moimId, BoardDto req) {
+    public ResponseEntity<Map<String, Object>> post(Long moimId, BoardDto req) {
         User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
         BoardContents contents = BoardContents.builder()
                 .content(req.getContents().getContent())
                 .build();
 
+        Moim moim = moimRepository.findByIdWithBoards(moimId);
         MoimBoard board = MoimBoard.builder()
                 .category(BoardCategory.valueOf(req.getCategory().toUpperCase()))
                 .title(req.getTitle())
                 .contents(contents)
                 .commentList(new ArrayList<>())
                 .isPublic(req.getIsPublic())
-                .moim(moimRepository.findById(moimId).get())
+                .moim(moim)
                 .writer(user)
                 .isDeleted(false)
                 .build();
-
         contents.setBoard(board);
         boardRepository.save(board);
 
-        BoardDto boardDto = BoardDto.builder()
-                .category(board.getCategory().toString())
-                .id(board.getId())
-                .contents(BoardContentsDto.builder()
-                        .content(board.getContents().getContent())
-                        .build())
-                .build();
-
-        return ResponseEntity.ok(boardDto);
+        return ResponseEntity.ok(Map.of("success", true, "boardId", board.getId()));
     }
 
     @Override
+    @Transactional
     public ResponseEntity<List<BoardDto>> getMoimBoardList(Long moimId, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         List<MoimBoard> boardList = boardRepository.findAllMoimBoardWithPageable(moimId, pageable);
         List<BoardDto> responseDtoList = boardList.stream().map((b) ->
                 BoardDto.builder()
+                        .title(b.getTitle())
                         .id(b.getId())
                         .category(b.getCategory().toString())
                         .isPublic(b.getIsPublic())
@@ -76,6 +71,7 @@ public class BoardSerivceImpl implements BoardSerivce {
                                 .id(b.getWriter().getId())
                                 .nickName(b.getWriter().getNickname())
                                 .build())
+                        .createdDate(b.getCreatedDate())
                         .build()
         ).toList();
         return ResponseEntity.ok(responseDtoList);
@@ -132,6 +128,7 @@ public class BoardSerivceImpl implements BoardSerivce {
             case "review" -> postReviewBoard(req, contents, user);
             case "faq" -> postFaqBoard(req, contents, user);
             case "event" -> postEventBoard(req, contents, user);
+            case "notice" -> postNoticeBoard(req, contents, user);
             default -> null;
         };
 
@@ -139,13 +136,24 @@ public class BoardSerivceImpl implements BoardSerivce {
         boardRepository.save(board);
 
         BoardDto boardDto = BoardDto.builder()
-                .category(board.getCategory().toString())
                 .id(board.getId())
                 .build();
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "board", boardDto));
+    }
+
+    private Board postNoticeBoard(BoardDto req, BoardContents contents, User user) {
+        NoticeBoard board = NoticeBoard.builder()
+                .isDeleted(false)
+                .isPublic(true)
+                .title(req.getTitle())
+                .writer(user)
+                .contents(contents)
+                .category(BoardCategory.NOTICE)
+                .build();
+        return (Board) boardRepository.save(board);
     }
 
     private Board postEventBoard(BoardDto req, BoardContents contents, User user) {
@@ -155,8 +163,8 @@ public class BoardSerivceImpl implements BoardSerivce {
                 .title(req.getTitle())
                 .writer(user)
                 .contents(contents)
-                .mainImage((String)req.getAdditionalInfo().get("imagePath"))
-                .category(BoardCategory.valueOf(req.getCategory().toUpperCase()))
+                .imageKey((String) req.getAdditionalInfo().get("imageKey"))
+                .eventCategory(EventCategory.valueOf((String) req.getAdditionalInfo().get("eventCategory")))
                 .build();
         return (Board) boardRepository.save(board);
     }
@@ -180,6 +188,7 @@ public class BoardSerivceImpl implements BoardSerivce {
                 .writer(user)
                 .isDeleted(false)
                 .contents(contents)
+                .imageKey((String) req.getAdditionalInfo().get("imageKey"))
                 .build();
         return (Board) boardRepository.save(board);
     }
@@ -215,14 +224,41 @@ public class BoardSerivceImpl implements BoardSerivce {
     }
 
     @Override
-    public ResponseEntity<List<BoardDto>> getEventBanners() {
+    public ResponseEntity<List<BoardDto>> getEventBanners(String category) {
         Pageable pageable = PageRequest.of(0, 5, Sort.by("createdDate").descending());
-        List<EventBannerBoard> boardList = boardRepository.find5EventBanner(pageable);
-        List<BoardDto> responseList = boardList.stream().map(b->BoardDto.builder()
+        List<EventBannerBoard> boardList = boardRepository.find5EventBanner(pageable, EventCategory.valueOf(category.toUpperCase()));
+        List<BoardDto> responseList = boardList.stream().map(b -> BoardDto.builder()
                 .id(b.getId())
-                .additionalInfo(Map.of("imagePath", b.getMainImage()))
+                .additionalInfo(Map.of("imageKey", b.getImageKey()))
                 .build()).toList();
         return ResponseEntity.ok(responseList);
+    }
+
+    @Override
+    public ResponseEntity<List<String>> getEventCategory() {
+        return ResponseEntity.ok(Arrays.asList(EventCategory.values()).stream().map(e -> e.toString()).toList());
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<Page<BoardDto>> getReviewBoardPage(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("createdDate").descending());
+
+        Page<ReviewBoard> boardPage = boardRepository.findAllWithPageable(pageable);
+        Page<BoardDto> boardDtoPage = new PageImpl<>(boardPage.stream().map(b -> {
+            BoardDto bDto = boardMapper.toDto(b);
+            WriterDto writerDto = WriterDto.builder()
+                    .nickName(b.getWriter().getNickname())
+                    .id(b.getWriter().getId())
+                    .profile(profileMapper.toDto(b.getWriter().getProfile()))
+                    .build();
+            bDto.setWriter(writerDto);
+            if(b.getImageKey()!=null){
+                bDto.setAdditionalInfo(Map.of("imageKey", b.getImageKey()));
+            }
+            return bDto;
+        }).collect(Collectors.toList()));
+        return ResponseEntity.ok(boardDtoPage);
     }
 
     private Board postQnaBoard(BoardDto req, BoardContents contents, User writer) {

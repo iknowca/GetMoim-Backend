@@ -15,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -60,7 +59,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests.requestMatchers("/user/sign-up", "/jwt/refresh", "/oauth", "/oauth/google-login", "/oauth/google","/user/check-nickname/**","/user/check-email/**"
-                            ,"/oauth/kakao" ,"/oauth/kakao-login", "/moim/{id}",  "/moim/list", "/moim/{id}/joinable", "/payment", "/payment/hook", "/travel/airport/list", "/board/list/moim/**")
+                            ,"/oauth/kakao" ,"/oauth/kakao-login", "/moim/{id}",  "/moim/list", "/moim/{id}/joinable", "/payment", "/payment/hook", "/travel/airport/list", "/board/list/moim/**", "/ml/**", "/**")
                             .permitAll();
                     authorizeRequests.requestMatchers("/user", "/moim", "/moim/{id}/user", "/travel/country/list", "/travel/city/list", "/travel/option/list", "/payment/moim/{moimId}", "/moim/list/**", "/board/moim/**", "/board/list/moim/**", "/board/{category}/{boardId}")
                             .hasAnyRole("NORMAL", "ADMIN");

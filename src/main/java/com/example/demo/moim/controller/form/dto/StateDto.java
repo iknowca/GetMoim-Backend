@@ -2,14 +2,7 @@ package com.example.demo.moim.controller.form.dto;
 
 import com.example.demo.moim.entity.Moim;
 import com.example.demo.moim.entity.StateType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class StateDto {
     private Long id;
     private StateType state;

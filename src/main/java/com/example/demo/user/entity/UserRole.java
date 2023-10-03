@@ -13,7 +13,7 @@ public class UserRole {
     @OneToOne(fetch = FetchType.LAZY )
     private User user;
     @Getter
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Role role;
 
     @Override

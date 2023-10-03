@@ -14,10 +14,7 @@ import java.util.List;
 @SuperBuilder
 @DiscriminatorValue(value="moim")
 public class MoimBoard extends Board{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Moim moim;
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "board")
     private List<Comment> commentList;

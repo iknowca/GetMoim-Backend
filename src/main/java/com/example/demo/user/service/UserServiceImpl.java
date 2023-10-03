@@ -4,11 +4,13 @@ import com.example.demo.security.costomUser.CustomUserDetails;
 import com.example.demo.security.service.RedisService;
 import com.example.demo.security.utils.JwtUtil;
 import com.example.demo.user.controller.form.UserDto;
-import com.example.demo.user.entity.*;
-import com.example.demo.user.controller.form.UserInfoResForm;
-import com.example.demo.user.controller.form.UserSignUpForm;
+import com.example.demo.user.entity.BlockUser;
+import com.example.demo.user.entity.FollowUser;
+import com.example.demo.user.entity.Profile;
+import com.example.demo.user.entity.User;
 import com.example.demo.user.repository.*;
 import com.example.demo.util.mapStruct.UserMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -36,20 +38,6 @@ public class UserServiceImpl implements UserService {
     final private FollowUserRepository followUserRepository;
     final private UserMapper userMapper;
     final private JwtUtil jwtUtil;
-    @Override
-    public boolean signUp(UserSignUpForm userSignUpForm) {
-        final Optional<User> maybeUser = userRepository.findByEmail(userSignUpForm.getEmail());
-        if (maybeUser.isPresent()) {
-            log.debug("이미 등록된 회원이라 가입할 수 없습니다.");
-            return false;
-        }
-        final User user = userSignUpForm.toUser(passwordEncoder.encode(userSignUpForm.getPassword()));
-        userRepository.save(user);
-        final Role role = roleRepository.findByRoleType(userSignUpForm.getRoleType()).get();
-        final UserRole userRole = new UserRole(user, role);
-        userRoleRepository.save(userRole);
-        return true;
-    }
 
     @Override
     public ResponseEntity signOut(HttpHeaders headers, String refreshToken) {
@@ -69,20 +57,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity getUserInfo() {
         User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        UserDto userDto = userMapper.toDto(user);
 
-        UserInfoResForm userInfoResForm = UserInfoResForm.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .roleType(user.getRole())
-                .blockedUsers(blockUserRepository.findByUser(user).stream().map(b->b.getBlockedUser().getId()).toList())
-                .followUsers(followUserRepository.findByUser(user).stream().map(f->f.getFollowee().getId()).toList())
-                .build();
         return ResponseEntity.ok()
-                .body(userInfoResForm);
+                .body(userDto);
     }
 
     @Override
@@ -148,10 +129,72 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<List<UserDto>> getFolloweeList() {
         User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        List<User> followeeList = followUserRepository.findAllByFollower(user);
-        List<UserDto> responseList = followeeList.stream()
+        List<FollowUser> followList = followUserRepository.findAllByFollower(user);
+        List<UserDto> responseList = followList.stream()
+                .map(f->f.getFollowee())
+                .map(userMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(responseList);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<UserDto> getOtherUserInfo(Long userId) {
+        User user = userRepository.findById(userId).get();
+        UserDto response = userMapper.toDto(user);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<Map<String, Object>> setProfile(Long group, Long number) {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        if(user.getProfile()==null) {
+            user.setProfile(new Profile());
+        }
+        Profile profile = user.getProfile();
+
+        profile.setGroupNumber(group);
+        profile.setNumber(number);
+        userRepository.save(user);
+
+        UserDto userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(Map.of("success", true, "user", userDto));
+    }
+
+    @Override
+    public ResponseEntity<List<Long>> getFollowUsers() {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        List<Long> followUserIdList = followUserRepository.findByUserIdsByUser(user);
+        return ResponseEntity.ok(followUserIdList);
+    }
+
+    @Override
+    public ResponseEntity<List<Long>> getBlockUsers() {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        List<Long> blockedUserIdList = blockUserRepository.findByUserIdsByUser(user);
+        return ResponseEntity.ok(blockedUserIdList);
+    }
+
+    @Override
+    public ResponseEntity<Map> modifyNickname(String nickname) {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        user.setNickname(nickname);
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDto>> getBLockUserList() {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        List<BlockUser> blockList = blockUserRepository.findAllByUser(user);
+        List<UserDto> responseList = blockList.stream()
+                .map(b->b.getBlockedUser())
                 .map(userMapper::toDto)
                 .toList();
         return ResponseEntity.ok(responseList);

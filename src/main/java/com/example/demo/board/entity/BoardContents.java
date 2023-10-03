@@ -13,6 +13,7 @@ public class BoardContents {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Setter
+    @Column(length = 3000)
     private String content;
     @OneToOne(fetch = FetchType.LAZY)
     @Setter

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @Getter
+@Setter
 public class State {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,16 +1,22 @@
 package com.example.demo.moim.controller.form.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.demo.moim.entity.MoimDestination;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class MoimOptionDto {
     private Long id;
-    private String optionName;
-    private Long optionPrice;
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("price")
+    private Long price;
+    @JsonProperty("imageKey")
+    private String imgPath;
+    private String info;
+    private String category;
 }

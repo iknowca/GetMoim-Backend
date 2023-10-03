@@ -1,6 +1,5 @@
 package com.example.demo.security.service;
 
-import com.example.demo.security.exception.AccessTokenException;
 import com.example.demo.security.exception.RefreshTokenException;
 import com.example.demo.security.utils.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,8 +22,8 @@ import java.util.Map;
 public class JwtServiceImpl implements JwtService{
     final JwtUtil jwtUtil;
     final RedisService redisService;
-    final long ACCESS_TOKEN_EXP_MIN = 10;
-    final long REFRESH_TOKEN_EXP_MIN = 10;
+    final long ACCESS_TOKEN_EXP_MIN = 1600;
+    final long REFRESH_TOKEN_EXP_MIN = 1600;
 
     @Override
     public ResponseEntity<Map<String, Object>> refresh(String refreshToken) {

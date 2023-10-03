@@ -1,9 +1,8 @@
 package com.example.demo.moim.controller.form.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.demo.moim.entity.Moim;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,10 +10,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @Getter
+@Setter
 public class MoimParticipantsInfoDto {
     private Long id;
-    private List<ParticipantDto> participants;
+    @JsonProperty("maxParticipants")
     private Integer maxNumOfUsers;
+    @JsonProperty("minParticipants")
     private Integer minNumOfUsers;
+    private List<ParticipantDto> participants;
     private Integer currentParticipantsNumber;
 }

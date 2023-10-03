@@ -5,6 +5,8 @@ import com.example.demo.moim.entity.MoimPaymentInfo;
 import com.example.demo.moim.entity.Participant;
 import com.example.demo.moim.repository.MoimRepository;
 import com.example.demo.moim.repository.ParticipantRepository;
+import com.example.demo.moim.service.MoimService;
+import com.example.demo.payment.controller.dto.InstallmentDto;
 import com.example.demo.payment.controller.dto.PaymentReqForm;
 import com.example.demo.payment.controller.dto.WebHookToken;
 import com.example.demo.payment.entity.Installment;
@@ -13,6 +15,8 @@ import com.example.demo.payment.repository.InstallmentRepository;
 import com.example.demo.payment.repository.PaymentRepository;
 import com.example.demo.security.costomUser.CustomUserDetails;
 import com.example.demo.user.entity.User;
+import com.example.demo.util.mapStruct.payment.InstallmentMapper;
+import com.example.demo.util.mapStruct.payment.PaymentMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.transaction.Transactional;
@@ -41,6 +45,9 @@ public class PaymentServiceImpl implements PaymentService {
     final ParticipantRepository participantRepository;
     final MoimRepository moimRepository;
     final InstallmentRepository installmentRepository;
+
+    final InstallmentMapper installmentMapper;
+    final PaymentMapper paymentMapper;
 
     @Value("${imp_key}")
     private String impKey;
@@ -132,6 +139,33 @@ public class PaymentServiceImpl implements PaymentService {
         return true;
     }
 
+    @Override
+    public List<Payment> findPaymentByMoim(Moim moim) {
+        List<Payment> payments = paymentRepository.findAllByMoim(moim);
+        return payments;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<List<InstallmentDto>> getInstallmentList() {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        List<Installment> installmentList = installmentRepository.findAllByUser(user);
+        List<InstallmentDto> installmentDtoList = installmentList.stream().map(i-> {
+            InstallmentDto installmentDto = installmentMapper.toDto(i);
+            installmentDto.setAdditionalInfo(new HashMap<>());
+            installmentDto.getAdditionalInfo().put("pg", i.getPayment().getPgProvider());
+            installmentDto.getAdditionalInfo().put("totalPrice", i.getPayment().getPaymentInfo().getTotalPrice());
+            installmentDto.getAdditionalInfo().put("moimTitle", i.getPayment().getPaymentInfo().getMoim().getContents().getTitle());
+            installmentDto.getAdditionalInfo().put("city", i.getPayment().getPaymentInfo().getMoim().getDestination().getCity());
+            installmentDto.getAdditionalInfo().put("airport", i.getPayment().getPaymentInfo().getMoim().getDestination().getDepartureAirport());
+            installmentDto.getAdditionalInfo().put("moimId", i.getPayment().getPaymentInfo().getMoim().getId());
+            installmentDto.getAdditionalInfo().put("moimImageKey", i.getPayment().getPaymentInfo().getMoim().getDestination().getImgPath());
+            return installmentDto;
+        }).toList();
+        return ResponseEntity.ok(installmentDtoList);
+    }
+
     private void cancelReservedPay(List<Installment> installments) {
         Installment reservedPay = installments.stream().filter((i) -> i.getReceipt_url() == null).findFirst().orElse(null);
         if (reservedPay != null) {
@@ -203,7 +237,7 @@ public class PaymentServiceImpl implements PaymentService {
         String merchantUid = UUID.randomUUID().toString();
         schedulesData.addProperty("merchant_uid", merchantUid);
         // millisecond to second 하기 위해 1000 나눠
-        schedulesData.addProperty("schedule_at", Timestamp.valueOf(LocalDateTime.now().plusMinutes(1)).getTime() / 1000);
+        schedulesData.addProperty("schedule_at", Timestamp.valueOf(LocalDateTime.now().plusMonths(1)).getTime() / 1000);
         log.info(String.valueOf(Timestamp.valueOf(LocalDateTime.now().plusMinutes(2)).getTime() / 1000));
         schedulesData.addProperty("amount", payment.getPaymentInfo().getAmountInstallment());
         schedulesData.addProperty("name", "get-moim");

@@ -1,12 +1,15 @@
 package com.example.demo.travel.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class TravelDto {
@@ -14,6 +17,9 @@ public class TravelDto {
     private String country;
     private String city;
     private String departureAirport;
+    @JsonProperty(value = "imageKey")
+    private String imgPath;
 
-    private List<TravelOptionDto> additionalOptions;
+    @JsonProperty(value="additionalOptions")
+    private List<TravelOptionDto> travelOptionDtos;
 }

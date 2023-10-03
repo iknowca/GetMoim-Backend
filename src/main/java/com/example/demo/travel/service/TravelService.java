@@ -16,4 +16,12 @@ public interface TravelService {
     ResponseEntity<List<String>> getAirports();
 
     ResponseEntity<List<String>> getAirports(String country, String city);
+
+     ResponseEntity<TravelDto>getTravel(String country, String city, String departureAirport);
+
+    ResponseEntity<TravelDto> modifyImg(TravelDto travelDto);
+
+    ResponseEntity<String> getImagePath(String country, String city, String airport);
+
+    ResponseEntity<Map<String, Object>> modifyTravel(TravelDto travelDto);
 }

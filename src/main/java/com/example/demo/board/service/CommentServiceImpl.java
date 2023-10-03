@@ -7,6 +7,7 @@ import com.example.demo.board.entity.Comment;
 import com.example.demo.board.repository.BoardRepository;
 import com.example.demo.board.repository.CommentRepository;
 import com.example.demo.security.costomUser.CustomUserDetails;
+import com.example.demo.user.controller.form.ProfileDto;
 import com.example.demo.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,10 @@ public class CommentServiceImpl implements CommentService {
                         .writer(WriterDto.builder()
                                 .id(c.getWriter().getId())
                                 .nickName(c.getWriter().getNickname())
+                                .profile(ProfileDto.builder()
+                                        .number(c.getWriter().getProfile().getNumber())
+                                        .groupNumber(c.getWriter().getProfile().getGroupNumber())
+                                        .build())
                                 .build())
                         .contents(c.getContents())
                         .createdTime(c.getCreatedDate())

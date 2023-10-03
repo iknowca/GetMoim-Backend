@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface PaymentInfoRepository extends JpaRepository<MoimPaymentInfo, Long> {
-    @Query("select sum(o.optionPrice)/m.moimPaymentInfo.amountInstallment from Moim m join m.destination.moimOptions o where m.id=:moimId")
+    @Query("select sum(o.price)/m.moimPaymentInfo.amountInstallment from Moim m join m.destination.moimOptions o where m.id=:moimId")
     Integer calculateNumInstallments(Long moimId);
 }

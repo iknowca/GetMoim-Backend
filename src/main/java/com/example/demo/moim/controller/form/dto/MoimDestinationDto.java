@@ -1,13 +1,8 @@
 package com.example.demo.moim.controller.form.dto;
 
-import com.example.demo.moim.entity.Moim;
-import com.example.demo.moim.entity.MoimOption;
 import com.example.demo.travel.entity.Airport;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.util.List;
 
@@ -15,10 +10,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class MoimDestinationDto {
     private Long id;
     private String country;
     private String city;
+    @JsonProperty("imageKey")
+    private String imgPath;
     private Airport departureAirport;
-    private List<MoimOptionDto> options;
+    @JsonProperty("optionsInfo")
+    private List<MoimOptionDto> moimOptions;
 }

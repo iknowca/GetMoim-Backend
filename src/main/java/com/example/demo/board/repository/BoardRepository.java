@@ -1,9 +1,7 @@
 package com.example.demo.board.repository;
 
-import com.example.demo.board.entity.Board;
-import com.example.demo.board.entity.BoardCategory;
-import com.example.demo.board.entity.EventBannerBoard;
-import com.example.demo.board.entity.MoimBoard;
+import com.example.demo.board.entity.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +24,9 @@ public interface BoardRepository<T extends Board> extends JpaRepository<T, Long>
     @Query("select b from Board b join fetch b.writer where b.category=:boardCategory")
     List<Board> findAllByCategoryAndPageable(BoardCategory boardCategory, Pageable pageable);
 
-    @Query("select e from EventBannerBoard e")
-    List<EventBannerBoard> find5EventBanner(Pageable pageable);
+    @Query("select e from EventBannerBoard e where e.eventCategory=:category")
+    List<EventBannerBoard> find5EventBanner(Pageable pageable, EventCategory category);
+
+    @Query("select r from ReviewBoard  r")
+    Page<ReviewBoard> findAllWithPageable(Pageable pageable);
 }

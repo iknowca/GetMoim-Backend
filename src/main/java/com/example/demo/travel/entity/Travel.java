@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @Getter
+@Setter
 public class Travel {
 
     @Id
@@ -19,9 +20,11 @@ public class Travel {
     private String country;
     private String city;
     @Enumerated(EnumType.STRING)
-    private Airport depatureAirport;
+    private Airport departureAirport;
+    @Setter
+    private String imgPath;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST}, mappedBy = "travel", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "travel")
     @Setter
     private List<TravelOption> travelOptions;
 }

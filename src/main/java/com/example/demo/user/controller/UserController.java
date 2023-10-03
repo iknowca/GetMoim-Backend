@@ -1,7 +1,6 @@
 package com.example.demo.user.controller;
 
 import com.example.demo.user.controller.form.UserDto;
-import com.example.demo.user.controller.form.UserSignUpForm;
 import com.example.demo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +17,6 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
     final private UserService userService;
-    @PostMapping("/sign-up")
-    public boolean userSignUp(@RequestBody UserSignUpForm userSignUpForm){
-        return userService.signUp(userSignUpForm);
-    }
     @DeleteMapping("/sign-out")
     public ResponseEntity userSignout(@RequestHeader HttpHeaders headers, @CookieValue("refreshToken") String refreshToken) {
         log.info("signout()");
@@ -31,14 +26,9 @@ public class UserController {
     public ResponseEntity getUserInfo() {
         return userService.getUserInfo();
     }
-
-    @GetMapping("/check-nickname/{nickname}")
-    public Boolean getNickname(@PathVariable("nickname") String nickname){
-        return userService.checkNickname(nickname);
-    }
-    @GetMapping("/check-email/{email}")
-    public Boolean getEmail(@PathVariable("email")  String email){
-        return userService.checkEmail(email);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getOtherUserInfo(@PathVariable Long userId) {
+        return userService.getOtherUserInfo(userId);
     }
 
     @PostMapping("/{userId}/block")
@@ -58,8 +48,28 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> cancelFollowUser(@PathVariable Long userId) {
         return userService.cancelFollowUser(userId);
     }
-    @GetMapping("/list/follow")
+    @GetMapping("/follow/info/list")
     public ResponseEntity<List<UserDto>> getFollowList() {
         return userService.getFolloweeList();
+    }
+    @GetMapping("/block/info/list")
+    public ResponseEntity<List<UserDto>> getBlockList() {
+        return userService.getBLockUserList();
+    }
+    @PostMapping("/profile")
+    public ResponseEntity<Map<String, Object>> setProfile(@RequestParam Long group, @RequestParam Long number){
+        return userService.setProfile(group, number);
+    }
+    @GetMapping("/follow/list")
+    public ResponseEntity<List<Long>> getFollowUsers() {
+        return userService.getFollowUsers();
+    }
+    @GetMapping("/block/list")
+    public ResponseEntity<List<Long>> getBlockUsers() {
+        return userService.getBlockUsers();
+    }
+    @PutMapping("/nickname")
+    public ResponseEntity<Map> modifyNickname(@RequestBody Map requestMap) {
+        return userService.modifyNickname((String)(requestMap.get("nickname")));
     }
 }

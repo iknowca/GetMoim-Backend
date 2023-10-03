@@ -8,6 +8,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
@@ -19,9 +20,9 @@ public class MoimParticipantsInfo {
     private Integer maxNumOfUsers;
     private Integer minNumOfUsers;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "moimParticipants")
     private List<Participant> participants;
-    @Formula("(select count(1) from participant p where p.moim_participants_info_id = id)")
+    @Formula("(select count(1) from participant p where p.moim_participants_id = id)")
     private Integer currentParticipantsNumber;
     @Setter
     @OneToOne(fetch = FetchType.LAZY)

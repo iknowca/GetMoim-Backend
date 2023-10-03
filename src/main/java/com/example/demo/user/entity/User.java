@@ -3,34 +3,26 @@ package com.example.demo.user.entity;
 import com.example.demo.user.controller.form.UserInfoResForm;
 import com.example.demo.user.controller.form.UserResForm;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Setter
     private String nickname;
-    private String password;
     private String email;
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @Setter
+    private Profile profile;
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER)
     private UserRole userRole;
-
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
-    public User(String name, String nickname, String email, String password) {
-        this.name = name;
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-    }
 
     public User(String name, String nickname, String email) {
         this.name = name;

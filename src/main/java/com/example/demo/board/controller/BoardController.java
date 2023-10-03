@@ -3,6 +3,7 @@ package com.example.demo.board.controller;
 import com.example.demo.board.controller.dto.BoardDto;
 import com.example.demo.board.service.BoardSerivce;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class BoardController {
     final BoardSerivce boardSerivce;
 
     @PostMapping("/moim/{moimId}")
-    public ResponseEntity<BoardDto> postMoimBoard(@PathVariable Long moimId, @RequestBody BoardDto req) {
+    public ResponseEntity<Map<String, Object>> postMoimBoard(@PathVariable Long moimId, @RequestBody BoardDto req) {
         return boardSerivce.post(moimId, req);
     }
 
@@ -46,8 +47,17 @@ public class BoardController {
     public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable Long boardId) {
         return boardSerivce.deleteBoard(boardId);
     }
-    @GetMapping(value="/list/event/main")
-    public ResponseEntity<List<BoardDto>> getEventBanners() {
-        return boardSerivce.getEventBanners();
+    @GetMapping(value="/list/event/{category}")
+    public ResponseEntity<List<BoardDto>> getEventBanners(@PathVariable String category) {
+
+        return boardSerivce.getEventBanners(category);
+    }
+    @GetMapping("/event/category/list")
+    public ResponseEntity<List<String>> getEventCategory() {
+        return boardSerivce.getEventCategory();
+    }
+    @GetMapping("/list/review")
+    public ResponseEntity<Page<BoardDto>> getReviewBoardPage(@RequestParam Integer page, @RequestParam Integer size) {
+        return boardSerivce.getReviewBoardPage(page, size);
     }
 }

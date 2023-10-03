@@ -3,12 +3,12 @@ package com.example.demo.moim.entity;
 import com.example.demo.payment.entity.Payment;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
@@ -21,10 +21,8 @@ public class MoimPaymentInfo {
     private Moim moim;
 
     private Long totalPrice;
-    @Setter
     private Long amountInstallment;
     private Integer numInstallments;
-    @Setter
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "paymentInfo")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "paymentInfo")
     private List<Payment> paymentList;
 }

@@ -1,14 +1,11 @@
 package com.example.demo.moim.entity;
 
-import com.example.demo.travel.entity.TravelOption;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +13,11 @@ public class MoimOption{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String optionName;
-    private Long optionPrice;
+    private String name;
+    private Long price;
+    private String imgPath;
+    private String info;
+    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MoimDestination moimDestination;
 }

@@ -1,5 +1,6 @@
 package com.example.demo.payment.controller;
 
+import com.example.demo.payment.controller.dto.InstallmentDto;
 import com.example.demo.payment.controller.dto.PaymentReqForm;
 import com.example.demo.payment.controller.dto.WebHookToken;
 import com.example.demo.payment.service.PaymentService;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +26,11 @@ public class PaymentController {
     }
     @PostMapping("/hook")
     public ResponseEntity<Map<String, Object>> webHook(@RequestBody WebHookToken token) {
+        System.out.println("webhook");
         return paymentService.webHook(token);
+    }
+    @GetMapping("/installment/list")
+    public ResponseEntity<List<InstallmentDto>> getInstallmentList() {
+        return paymentService.getInstallmentList();
     }
 }

@@ -1,17 +1,15 @@
 package com.example.demo.moim.controller.form.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class MoimContentsDto {
     private Long id;
-    private String content;
     private String title;
+    private String content;
 
 }

@@ -8,6 +8,7 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class Participant {
@@ -19,6 +20,6 @@ public class Participant {
     @OneToOne(fetch = FetchType.LAZY)
     @Setter
     private Payment payment;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private MoimParticipantsInfo moimParticipantsInfo;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private MoimParticipantsInfo moimParticipants;
 }

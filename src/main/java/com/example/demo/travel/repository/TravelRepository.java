@@ -19,9 +19,15 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
     @Query("select t from Travel t join fetch t.travelOptions where t.city = :city")
     Optional<Travel> findByCity(String city);
 
-    @Query("select t.depatureAirport from Travel t where t.country = :country and t.city = :city")
+    @Query("select t.departureAirport from Travel t where t.country = :country and t.city = :city")
     List<String> findAirportsByCountryAndCity(String country, String city);
 
-    @Query("select t from Travel t where t.city=:city and t.depatureAirport=:departureAirport")
+    @Query("select t from Travel t where t.city=:city and t.departureAirport=:departureAirport")
     Optional<Travel> findByCityAndAirPort(String city, Airport departureAirport);
+
+    @Query("select t from Travel t left join fetch t.travelOptions where t.city=:city and t.departureAirport=:departureAirport and t.country=:country")
+    Optional<Travel> findByCountryCityAirPort(String country,String city,Airport departureAirport);
+
+    @Query("select t from Travel t left join fetch t.travelOptions where :travelOption member of t.travelOptions")
+    Travel findByTravelOption(TravelOption travelOption);
 }

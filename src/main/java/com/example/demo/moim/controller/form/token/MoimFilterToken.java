@@ -1,6 +1,5 @@
 package com.example.demo.moim.controller.form.token;
 
-import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;

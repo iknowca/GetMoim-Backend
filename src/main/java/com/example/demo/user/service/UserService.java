@@ -1,7 +1,6 @@
 package com.example.demo.user.service;
 
 import com.example.demo.user.controller.form.UserDto;
-import com.example.demo.user.controller.form.UserSignUpForm;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -9,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-    boolean signUp(UserSignUpForm userSignUpForm);
 
     ResponseEntity signOut(HttpHeaders headers, String refreshToken);
 
@@ -26,4 +24,16 @@ public interface UserService {
     ResponseEntity<Map<String, Object>> cancelFollowUser(Long userId);
 
     ResponseEntity<List<UserDto>> getFolloweeList();
+
+    ResponseEntity<UserDto> getOtherUserInfo(Long userId);
+
+    ResponseEntity<Map<String, Object>> setProfile(Long group, Long number);
+
+    ResponseEntity<List<Long>> getFollowUsers();
+
+    ResponseEntity<List<Long>> getBlockUsers();
+
+    ResponseEntity<Map> modifyNickname(String nickname);
+
+    ResponseEntity<List<UserDto>> getBLockUserList();
 }

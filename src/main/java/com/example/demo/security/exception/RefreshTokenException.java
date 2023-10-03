@@ -15,7 +15,7 @@ public class RefreshTokenException extends RuntimeException{
         UNACCEPT(401, "Token is null or too short: refreshToken"),
         MALFORM(403, "Malformed Token: refreshToken"),
         BADSIGN(403, "BadSignatured Token: refreshToken"),
-        EXPIRED(403, "Expired Token: accessToken: refreshToken");
+        EXPIRED(403, "Expired Token: refreshToken");
         private final int status;
         private final String msg;
         TOKEN_ERROR(int status, String msg) {

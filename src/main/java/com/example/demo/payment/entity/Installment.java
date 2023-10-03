@@ -2,6 +2,9 @@ package com.example.demo.payment.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
@@ -23,4 +26,6 @@ public class Installment {
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     private Payment payment;
+    @CreationTimestamp
+    private LocalDateTime createdDate;
 }

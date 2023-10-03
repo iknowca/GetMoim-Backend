@@ -1,13 +1,14 @@
 package com.example.demo.board.service;
 
 import com.example.demo.board.controller.dto.BoardDto;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
 
 public interface BoardSerivce {
-    ResponseEntity<BoardDto> post(Long moimId, BoardDto req);
+    ResponseEntity<Map<String, Object>> post(Long moimId, BoardDto req);
 
     ResponseEntity<List<BoardDto>> getMoimBoardList(Long moimId, Integer page, Integer size);
 
@@ -21,5 +22,9 @@ public interface BoardSerivce {
 
     ResponseEntity<Map<String, Object>> deleteBoard(Long boardId);
 
-    ResponseEntity<List<BoardDto>> getEventBanners();
+    ResponseEntity<List<BoardDto>> getEventBanners(String category);
+
+    ResponseEntity<List<String>> getEventCategory();
+
+    ResponseEntity<Page<BoardDto>> getReviewBoardPage(Integer page, Integer size);
 }

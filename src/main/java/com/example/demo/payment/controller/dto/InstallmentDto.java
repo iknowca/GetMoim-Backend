@@ -1,9 +1,12 @@
 package com.example.demo.payment.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.demo.payment.entity.Payment;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,7 +14,12 @@ import lombok.NoArgsConstructor;
 @Getter
 public class InstallmentDto {
     private Long id;
-    private PaymentDto payment;
+
     private Long amount;
     private String merchantUid;
+    private String impUid;
+    private String receipt_url;
+    private LocalDateTime createdDate;
+    @Setter
+    private Map<String, Object> additionalInfo;
 }
