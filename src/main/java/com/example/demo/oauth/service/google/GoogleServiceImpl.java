@@ -123,7 +123,6 @@ public class GoogleServiceImpl implements GoogleService{
 
         ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
                 .path("/")
                 .build();
 

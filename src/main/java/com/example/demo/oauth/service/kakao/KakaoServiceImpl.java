@@ -66,7 +66,6 @@ public class KakaoServiceImpl implements KakaoService {
 
         ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
                 .path("/")
                 .build();
 
