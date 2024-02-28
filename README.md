@@ -5,7 +5,7 @@ REST API로 설계되었으며 클라이언트와 통신합니다.<br>
 프론트엔드는 포함되어 있지 않으며 클라이언트와 통신하는 API만을 제공합니다.
 
 ## 프로젝트 아키텍쳐
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 ## 주요 구현 기능
 - Spring Security를 사용한 JWT 토큰 기반 인증
